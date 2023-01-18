@@ -1,0 +1,125 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.8/d3.min.js" type="text/JavaScript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.min.js"></script>
+
+<?php
+$servname = 'localhost';
+$dbname = 'Consultations';
+$user = 'root';
+$pass = 'root';
+
+try {
+    $dbco = new PDO("mysql:host=$servname;dbname=$dbname", $user, $pass);
+    $dbco->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    
+    /**
+     * Création d'une table suivant un modèle
+     */
+
+    // $dupTable = "CREATE TABLE test2 LIKE test";
+    // $requete = $dbco->prepare($dupTable);
+    // $requete->execute();
+    // echo '<p>Table créée</p>';
+
+
+    /**
+     * Insertion des données de la table source
+     * dans la nouvelle table
+     */
+
+    // $dupTable = "INSERT INTO test2 SELECT * from test";
+    // $requete = $dbco->prepare($dupTable);
+    // $requete->execute();
+    // echo '<p>Insertion des données</p>';
+    
+
+    /**
+     * 1/ Traitement multiple requêtes
+     * 2/ Remplacement de données col 1
+     * 3/ Remplacement de données col 2
+     * 4/ Création nouvelle col
+     * 5/ Concat col 1 + col 2 dans nouvelle col
+     */
+
+    $modif = [
+        "INSERT INTO test2 SELECT * from test",
+        "CREATE TABLE test2 LIKE test",
+        "UPDATE test2 SET marque_1 = 'Honda' WHERE marque_1 !=''",
+        "UPDATE test2 SET marque_2 = 'Kawa' WHERE marque_2 !=''",
+        "ALTER TABLE test2 ADD marque VARCHAR(50)",
+        "UPDATE test2 SET marque = CONCAT(marque_1,marque_2)",
+        "ALTER TABLE test2 DROP COLUMN marque_1, DROP COLUMN marque_2"
+    ];
+    $messages = [
+        "Table créée",
+        "Insertion des données",
+        "Modif marque Honda réussie",
+        "Modif marque Kawa réussie",
+        "Création de la colonne marque réussi",
+        "Fusion réussie",
+        "Suppression de marque_1 et marque_2"
+    ];
+    $i=0;
+    foreach ($modif as $query) {
+        $stmt = $dbco->prepare($query);
+        $stmt->execute();
+        echo '<p>&#10004; '.$messages[$i++].'</p>';
+    }
+
+    /**
+     * Copier / Remplacer #1
+     * partout où pas vide
+     */
+
+    // $modif = "UPDATE test2
+    // SET marque_1 = 'Honda ' WHERE marque_1 !=''";
+    // $requete = $dbco->prepare($modif);
+    // $requete->execute();
+    // echo '<p>Modif marque Honda réussie</p>';
+
+
+     /**
+     * Copier / Remplacer #2
+     * partout où pas vide
+     */
+
+    // $modif2 = "UPDATE test2
+    // SET marque_2 = 'Kawa' WHERE marque_2 !=''";
+    // $requete2 = $dbco->prepare($modif2);
+    // $requete2->execute();
+    // echo '<p>Modif marque Kawa réussie</p>';
+
+    
+    /**
+     * Ajout nouvelle colonne
+     * et ses caractéristiques (type + nom)
+     */
+
+    // $ajoutColMarque = "ALTER TABLE test2
+    // ADD marque VARCHAR(50)";
+    // $requeteAjoutColM = $dbco->prepare($ajoutColMarque);
+    // $requeteAjoutColM->execute();
+    // echo '<p>Ajout de la colonne marque réussi</p>';
+
+
+     /**
+     * Concaténation et insertion 
+     * dans colonne créé
+     * Attention les colonnes doivent être du même type
+     */
+
+    // $join_col = "UPDATE test2 SET marque = CONCAT(marque_1,',',marque_2)";
+    // $requeteJoinColM = $dbco->prepare($join_col);
+    // $requeteJoinColM->execute();
+    // echo '<p>Fusion réussie</p>';
+
+    
+    // $suppColMarque = "ALTER TABLE test2
+    // DROP COLUMN marque";
+    // $requeteSuppColM = $dbco->prepare($suppColMarque);
+    // $requeteSuppColM->execute();
+    // echo '<p>Suppression de la colonne marque réussi</p>';
+
+
+} catch (PDOException $e) {
+    echo '<div class="erreur">Erreur de connexion :</br>'. $e->getMessage().'</div>';
+}
