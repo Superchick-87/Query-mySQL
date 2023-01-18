@@ -41,8 +41,8 @@ try {
      */
 
     $modif = [
-        "INSERT INTO test2 SELECT * from test",
         "CREATE TABLE test2 LIKE test",
+        "INSERT INTO test2 SELECT * from test",
         "UPDATE test2 SET marque_1 = 'Honda' WHERE marque_1 !=''",
         "UPDATE test2 SET marque_2 = 'Kawa' WHERE marque_2 !=''",
         "ALTER TABLE test2 ADD marque VARCHAR(50)",
@@ -54,7 +54,7 @@ try {
         "Insertion des données",
         "Modif marque Honda réussie",
         "Modif marque Kawa réussie",
-        "Création de la colonne marque réussi",
+        "Création de la colonne marque réussie",
         "Fusion réussie",
         "Suppression de marque_1 et marque_2"
     ];
