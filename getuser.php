@@ -59,10 +59,11 @@ try {
         "Suppression de marque_1 et marque_2"
     ];
     $i=0;
+    $n=1;
     foreach ($modif as $query) {
         $stmt = $dbco->prepare($query);
         $stmt->execute();
-        echo '<p>&#10004; '.$messages[$i++].'</p>';
+        echo '<p>&#10004;' .$n++. ' '.$messages[$i++].'</p>';
     }
 
     /**
@@ -121,5 +122,6 @@ try {
 
 
 } catch (PDOException $e) {
-    echo '<div class="erreur">Erreur de connexion :</br>'. $e->getMessage().'</div>';
+    echo '<div class="erreur">&#10006;</br>Erreur de connexion
+    </br>'. $e->getMessage().'</div>';
 }
