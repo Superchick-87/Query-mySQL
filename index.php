@@ -14,13 +14,22 @@
 
 </head>
 
-<body>
+<body >
     <h1>MySQL</h1>
     <button id="Go">Traitement</button>
     <div id="txtHint">
     </div>
 </body>
 <script language="javascript">
+    function load() {
+        window.location.reload();
+    };
+    function rtn() {
+        //    window.history.go(-1);
+        document.getElementById("txtHint").innerHTML = "";
+        
+    };
+    
     /* Fonction Ajax */
     var boutonGo = document.getElementById("Go");
     boutonGo.addEventListener("click", showCustomer);
@@ -30,6 +39,7 @@
         if (str == "") {
             document.getElementById("txtHint").innerHTML = "";
             boutonGo.innerHTML = "Traitement";
+            boutonGo.addEventListener("click", load);
             return;
         }
         xhttp = new XMLHttpRequest();
@@ -37,13 +47,8 @@
             if (this.readyState == 4 && this.status == 200) {
                 document.getElementById("txtHint").innerHTML = this.responseText;
                 boutonGo.innerHTML = "Retour";
-
-                function load() {
-                    window.location.reload();
-                };
-
                 boutonGo.addEventListener("click", load);
-
+                return;
             }
         };
 

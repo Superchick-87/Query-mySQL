@@ -7,9 +7,94 @@ $dbname = 'Consultations';
 $user = 'root';
 $pass = 'root';
 
+$tableTarguet2 = 'test3';
+$tableTarguet = 'test2';
+$tableOrigin = 'test';
 try {
     $dbco = new PDO("mysql:host=$servname;dbname=$dbname", $user, $pass);
     $dbco->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    
+    /**
+     * Construction d'une table issue de tables multiples
+     * 2 types de jointures :
+     * #1 - JOIN
+     * #2 - JOINTURE INTERNE
+     */
+    
+     $modif = [ 
+        // "INSERT INTO ps_category (id_product) SELECT product_id FROM knd1y_hikashop_category",
+        // "CREATE TABLE test2 LIKE test"
+
+        // "INSERT INTO $tableTarguet2(id) SELECT id FROM $tableOrigin"
+        "INSERT INTO test3(id) SELECT id from test"
+       
+        #1 - JOIN
+        // "UPDATE test
+        // JOIN test2 USING (id_product)
+        // JOIN test3 ON test.id_product = test3.id_product
+        // SET test3.marque = test.marque_,
+        //     test2.marque_1 = test.marque_1,
+        //     test2.marque_2 = test.marque_2,
+        //     test2.marque = test3.marque"
+
+        #2 - JOINTURE INTERNE 
+        // "UPDATE test AS t, test2 AS t2, test3 AS t3
+        // SET t2.marque_2 = t.marque_2,
+        // t3.marque_2 = t.marque_2,
+        // t2.marque_1 = t.marque_1,
+        // t3.marque_1 = t.marque_1
+        // WHERE t.id_product = t3.id_product AND t.id_product = t2.id_product"
+
+    
+    ];
+    $messages = [
+        // "<b>marque</b> dans table <b>".$tableTarguet."</b>",
+        "<b> </b> dans table <b>".$tableTarguet."</b>",
+        "<b> </b> dans table <b>".$tableTarguet2."</b>"
+    ];
+           
+    $i=0;
+    $n=1;
+    foreach ($modif as $query) {
+        $sth = $dbco->prepare($query);
+        $sth->execute();
+        $resultat = $sth->fetchAll(PDO::FETCH_ASSOC);
+        echo '<p>&#10004; ' .$n++. 'Copie réussie colonne '.$messages[$i++].'</p>';
+        };
+
+    /**
+     * 1/ Traitement multiple requêtes
+     * 2/ Remplacement de données col 1
+     * 3/ Remplacement de données col 2
+     * 4/ Création nouvelle col
+     * 5/ Concat col 1 + col 2 dans nouvelle col
+     */
+
+    // $modif = [
+    //     "CREATE TABLE test2 LIKE test",
+    //     "INSERT INTO test2 SELECT * from test",
+    //     "UPDATE test2 SET marque_1 = 'Honda' WHERE marque_1 !=''",
+    //     "UPDATE test2 SET marque_2 = 'Kawa' WHERE marque_2 !=''",
+    //     "ALTER TABLE test2 ADD marque VARCHAR(50)",
+    //     "UPDATE test2 SET marque = CONCAT(marque_1,marque_2)",
+    //     "ALTER TABLE test2 DROP COLUMN marque_1, DROP COLUMN marque_2"
+    // ];
+    // $messages = [
+    //     "Table créée",
+    //     "Insertion des données",
+    //     "Modif marque Honda réussie",
+    //     "Modif marque Kawa réussie",
+    //     "Création de la colonne marque réussie",
+    //     "Fusion réussie",
+    //     "Suppression de marque_1 et marque_2"
+    // ];
+    // $i=0;
+    // $n=1;
+    // foreach ($modif as $query) {
+    //     $stmt = $dbco->prepare($query);
+    //     $stmt->execute();
+    //     echo '<p>&#10004;' .$n++. ' '.$messages[$i++].'</p>';
+    // }
     
     /**
      * Création d'une table suivant un modèle
@@ -32,39 +117,6 @@ try {
     // echo '<p>Insertion des données</p>';
     
 
-    /**
-     * 1/ Traitement multiple requêtes
-     * 2/ Remplacement de données col 1
-     * 3/ Remplacement de données col 2
-     * 4/ Création nouvelle col
-     * 5/ Concat col 1 + col 2 dans nouvelle col
-     */
-
-    $modif = [
-        "CREATE TABLE test2 LIKE test",
-        "INSERT INTO test2 SELECT * from test",
-        "UPDATE test2 SET marque_1 = 'Honda' WHERE marque_1 !=''",
-        "UPDATE test2 SET marque_2 = 'Kawa' WHERE marque_2 !=''",
-        "ALTER TABLE test2 ADD marque VARCHAR(50)",
-        "UPDATE test2 SET marque = CONCAT(marque_1,marque_2)",
-        "ALTER TABLE test2 DROP COLUMN marque_1, DROP COLUMN marque_2"
-    ];
-    $messages = [
-        "Table créée",
-        "Insertion des données",
-        "Modif marque Honda réussie",
-        "Modif marque Kawa réussie",
-        "Création de la colonne marque réussie",
-        "Fusion réussie",
-        "Suppression de marque_1 et marque_2"
-    ];
-    $i=0;
-    $n=1;
-    foreach ($modif as $query) {
-        $stmt = $dbco->prepare($query);
-        $stmt->execute();
-        echo '<p>&#10004;' .$n++. ' '.$messages[$i++].'</p>';
-    }
 
     /**
      * Copier / Remplacer #1
