@@ -26,16 +26,20 @@ try {
         // "CREATE TABLE test2 LIKE test"
 
         // "INSERT INTO $tableTarguet2(id) SELECT id FROM $tableOrigin"
-        "INSERT INTO test3(id) SELECT id from test"
+        // "INSERT INTO test2(id) SELECT id from Question",
        
         #1 - JOIN
-        // "UPDATE test
-        // JOIN test2 USING (id_product)
-        // JOIN test3 ON test.id_product = test3.id_product
-        // SET test3.marque = test.marque_,
-        //     test2.marque_1 = test.marque_1,
-        //     test2.marque_2 = test.marque_2,
-        //     test2.marque = test3.marque"
+        "UPDATE test
+        JOIN test2 USING (id)
+        JOIN Question USING (id)
+        JOIN test3 ON test.id = test3.id
+        SET test.marque_2 = Question.Zone,
+            test.Question = Question.Question,
+            test.marque_1 = test3.marque_2,
+            test3.Question = Question.Question,
+            test2.marque_1 = Question.Question,
+            test2.marque_2 = '0',
+            test.marque_1 = '1'"
 
         #2 - JOINTURE INTERNE 
         // "UPDATE test AS t, test2 AS t2, test3 AS t3
@@ -45,11 +49,12 @@ try {
         // t3.marque_1 = t.marque_1
         // WHERE t.id_product = t3.id_product AND t.id_product = t2.id_product"
 
+
     
     ];
     $messages = [
         // "<b>marque</b> dans table <b>".$tableTarguet."</b>",
-        "<b> </b> dans table <b>".$tableTarguet."</b>",
+        // "<b> </b> dans table <b>".$tableTarguet."</b>",
         "<b> </b> dans table <b>".$tableTarguet2."</b>"
     ];
            
@@ -59,7 +64,7 @@ try {
         $sth = $dbco->prepare($query);
         $sth->execute();
         $resultat = $sth->fetchAll(PDO::FETCH_ASSOC);
-        echo '<p>&#10004; ' .$n++. 'Copie réussie colonne '.$messages[$i++].'</p>';
+        echo '<p>&#10004; ' .$n++. ' Copie réussie colonne '.$messages[$i++].'</p>';
         };
 
     /**
