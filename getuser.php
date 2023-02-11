@@ -3,13 +3,13 @@
 
 <?php
 $servname = 'localhost';
-$dbname = 'Consultations';
+$dbname = 'trconseil2023';
 $user = 'root';
 $pass = 'root';
 
-$tableTarguet2 = 'test3';
-$tableTarguet = 'test2';
-$tableOrigin = 'test';
+// $tableTarguet2 = 'test3';
+// $tableTarguet = 'test2';
+// $tableOrigin = 'test';
 try {
     $dbco = new PDO("mysql:host=$servname;dbname=$dbname", $user, $pass);
     $dbco->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
@@ -22,25 +22,48 @@ try {
      */
     
      $modif = [ 
-        // "INSERT INTO ps_category (id_product) SELECT product_id FROM knd1y_hikashop_category",
-        // "CREATE TABLE test2 LIKE test"
+        // "INSERT INTO ps_category (id_category) SELECT category_id FROM knd1y_hikashop_category",
+        // "INSERT INTO ps_category_lang (id_category) SELECT category_id FROM knd1y_hikashop_category",
+        "INSERT INTO ps_category_product (id_category) SELECT category_id FROM knd1y_hikashop_product_category",    
+//         "ALTER TABLE ps_category_product
+// ADD CONSTRAINT ps_category_product.id_product
+//   DEFAULT ('0') FOR (id_product)"
 
-        // "INSERT INTO $tableTarguet2(id) SELECT id FROM $tableOrigin"
-        // "INSERT INTO test2(id) SELECT id from Question",
-       
         #1 - JOIN
-        "UPDATE test
-        JOIN test2 USING (id)
-        JOIN Question USING (id)
-        JOIN test3 ON test.id = test3.id
-        SET test.marque_2 = Question.Zone,
-            test.Question = Question.Question,
-            test.marque_1 = test3.marque_2,
-            test3.Question = Question.Question,
-            test2.marque_1 = Question.Question,
-            test2.marque_2 = '0',
-            test.marque_1 = '1'"
+        "UPDATE ps_category_product AS ps
+        JOIN knd1y_hikashop_product_category AS hikPC ON ps.id_category = hikPC.category_id
+        SET ps.id_product = hikPC.product_id,
+            ps.position = hikPC.ordering"
 
+        // "UPDATE ps_category AS ps
+        // -- JOIN knd1y_hikashop_category USING (id)
+        // -- JOIN Question USING (id)
+        // JOIN knd1y_hikashop_category AS hik ON ps.id_category = hik.category_id
+        // SET ps.id_parent = hik.category_parent_id,
+        //     ps.id_shop_default = '1',
+        //     ps.level_depth = hik.category_depth,
+        //     ps.nleft = hik.category_left,
+        //     ps.nright = hik.category_right,
+        //     ps.active = hik.category_published,
+        //     ps.date_add = CURDATE(),
+        //     ps.date_upd = CURDATE(),
+        //     ps.position = hik.category_ordering,
+        //     ps.is_root_category = '0'"
+       
+        // "UPDATE ps_category_lang AS ps
+        // -- JOIN knd1y_hikashop_category USING (id)
+        // -- JOIN Question USING (id)
+        // JOIN knd1y_hikashop_category AS hik ON ps.id_category = hik.category_id
+        // SET ps.id_shop = '1',
+        //     ps.id_lang = '1',
+        //     ps.name = hik.category_name,
+        //     ps.description = hik.category_description,
+        //     ps.link_rewrite = hik.category_alias,
+        //     ps.meta_title = hik.category_page_title,
+        //     ps.meta_keywords = hik.category_keywords,
+        //     ps.meta_description = hik.category_meta_description"
+        
+        
         #2 - JOINTURE INTERNE 
         // "UPDATE test AS t, test2 AS t2, test3 AS t3
         // SET t2.marque_2 = t.marque_2,
@@ -48,14 +71,11 @@ try {
         // t2.marque_1 = t.marque_1,
         // t3.marque_1 = t.marque_1
         // WHERE t.id_product = t3.id_product AND t.id_product = t2.id_product"
-
-
-    
     ];
     $messages = [
         // "<b>marque</b> dans table <b>".$tableTarguet."</b>",
-        // "<b> </b> dans table <b>".$tableTarguet."</b>",
-        "<b> </b> dans table <b>".$tableTarguet2."</b>"
+        // "<b>INSERT OK</b>",
+        "<b>UPDATE ps_category OK</b>"
     ];
            
     $i=0;
@@ -64,7 +84,7 @@ try {
         $sth = $dbco->prepare($query);
         $sth->execute();
         $resultat = $sth->fetchAll(PDO::FETCH_ASSOC);
-        echo '<p>&#10004; ' .$n++. ' Copie réussie colonne '.$messages[$i++].'</p>';
+        echo '<p>&#10004; ' .$n++. ' '.$messages[$i++].'</p>';
         };
 
     /**
