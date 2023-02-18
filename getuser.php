@@ -3,7 +3,7 @@
 
 <?php
 $servname = 'localhost';
-$dbname = 'trconseil2023';
+$dbname = 'Consultations';
 $user = 'root';
 $pass = 'root';
 
@@ -14,92 +14,101 @@ try {
     $dbco = new PDO("mysql:host=$servname;dbname=$dbname", $user, $pass);
     $dbco->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
     
-    /**
-     * Construction d'une table issue de tables multiples
-     * 2 types de jointures :
-     * #1 - JOIN
-     * #2 - JOINTURE INTERNE
-     */
     
-     $modif = [ 
-         //  VALUE NULL la clé primaire sur la table
-         // "ALTER TABLE ps_category_product ALTER COLUMN position SET DEFAULT 0",
-         
-         
-         // "INSERT INTO ps_category (id_category) SELECT category_id FROM knd1y_hikashop_category",
-         // "INSERT INTO ps_category_lang (id_category) SELECT category_id FROM knd1y_hikashop_category",
-         
-         // #1 - SUPRESSION la clé primaire sur la table
-         "ALTER TABLE ps_category_product DROP PRIMARY KEY",
-         
-         // #2 - AJOUT colonne id + AI + PRIMARY
-         "ALTER TABLE ps_category_product ADD id INT(255) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id)",
+    $modif = [ 
+                //  VALUE NULL la clé primaire sur la table
+                // "ALTER TABLE ps_category_product ALTER COLUMN position SET DEFAULT 0",
+        /**
+        * VIDANGE TABLES CATEGORIES
+        */
+        "DROP PROCEDURE IF EXISTS CLEAR_TABLES",
+
+            "CREATE PROCEDURE CLEAR_TABLES()
+                BEGIN
+                    TRUNCATE TABLE test2;
+                    TRUNCATE TABLE test3;
+                    -- etc ...
+                END;",
+      
+            "CALL CLEAR_TABLES()"
+
+//     /**
+//     * TABLE ps_category
+//     */
+    //     // #1 - INSERT temp colonne id
+    //     "INSERT INTO ps_category (id_category) SELECT category_id FROM knd1y_hikashop_category",
         
-        // #3 - CHANGE valeur par default cols id_product + id_category
-        " ALTER TABLE ps_category_product CHANGE id_product id_product INT(10) UNSIGNED NULL DEFAULT NULL",
-        " ALTER TABLE ps_category_product CHANGE id_category id_category  INT(10) UNSIGNED NULL DEFAULT NULL",
+    //     // #2 - UPDATE datas <- knd1y_hikashop_category
+    //     "UPDATE ps_category AS ps
+    //     -- JOIN knd1y_hikashop_category USING (id)
+    //     -- JOIN Question USING (id)
+    //     JOIN knd1y_hikashop_category AS hik
+    //     ON ps.id_category = hik.category_id
+    //     SET ps.id_parent        = hik.category_parent_id,
+    //         ps.id_shop_default  = '1',
+    //         ps.level_depth      = hik.category_depth,
+    //         ps.nleft            = hik.category_left,
+    //         ps.nright           = hik.category_right,
+    //         ps.active           = hik.category_published,
+    //         ps.date_add         = CURDATE(),
+    //         ps.date_upd         = CURDATE(),
+    //         ps.position         = hik.category_ordering,
+    //         ps.is_root_category = '0'", 
+         
+//     /**
+//     * TABLE ps_category_lang
+//     */
+    //     // #1 - INSERT id_category
+    //     "INSERT INTO ps_category_lang (id_category) SELECT category_id FROM knd1y_hikashop_category",
+       
+    //    // #2 - UPDATE datas <- knd1y_hikashop_category
+    //    "UPDATE ps_category_lang AS ps
+    //     -- JOIN knd1y_hikashop_category USING (id)
+    //     -- JOIN Question USING (id)
+    //     JOIN knd1y_hikashop_category AS hik
+    //     ON ps.id_category = hik.category_id
+    //     SET ps.id_shop          = '1',
+    //         ps.id_lang          = '1',
+    //         ps.name             = hik.category_name,
+    //         ps.description      = hik.category_description,
+    //         ps.link_rewrite     = hik.category_alias,
+    //         ps.meta_title       = hik.category_page_title,
+    //         ps.meta_keywords    = hik.category_keywords,
+    //         ps.meta_description = hik.category_meta_description",
+         
+//     /**
+//     * TABLE ps_category_product
+//     */
+    //     // #1 - SUPRESSION la clé primaire sur la table
+    //      "ALTER TABLE ps_category_product DROP PRIMARY KEY",
+         
+    //     // #2 - AJOUT colonne id + AI + PRIMARY
+    //      "ALTER TABLE ps_category_product ADD id INT(255) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id)",
         
-        // #4 - INSERT temp colonne id
-        "INSERT INTO ps_category_product (id) SELECT product_category_id FROM knd1y_hikashop_product_category",
+    //     // #3 - CHANGE valeur par default cols id_product + id_category
+    //     " ALTER TABLE ps_category_product CHANGE id_product id_product INT(10) UNSIGNED NULL DEFAULT NULL",
+    //     " ALTER TABLE ps_category_product CHANGE id_category id_category  INT(10) UNSIGNED NULL DEFAULT NULL",
+        
+    //     // #4 - INSERT temp colonne id
+    //     "INSERT INTO ps_category_product (id) SELECT product_category_id FROM knd1y_hikashop_product_category",
     
-        // #5 - UPDATE datas <- knd1y_hikashop_product_category
-        "UPDATE ps_category_product AS ps
-        JOIN knd1y_hikashop_product_category AS hik ON ps.id = hik.product_category_id
-        SET ps.id_category = hik.category_id,
-            ps.id_product = hik.product_id,
-            ps.	position = hik.ordering",
+    //     // #5 - UPDATE datas <- knd1y_hikashop_product_category
+    //     "UPDATE ps_category_product AS ps
+    //     JOIN knd1y_hikashop_product_category AS hik ON ps.id = hik.product_category_id
+    //     SET ps.id_category  = hik.category_id,
+    //         ps.id_product   = hik.product_id,
+    //         ps.	position    = hik.ordering",
         
-        // #6 - SUPRESSION colonne id
-        "ALTER TABLE ps_category_product DROP COLUMN id",
+    //     // #6 - SUPRESSION colonne id
+    //     "ALTER TABLE ps_category_product DROP COLUMN id",
        
-        // #7 - AJOUT la clé primaire sur id_category & id_product
-        "ALTER TABLE ps_category_product ADD PRIMARY KEY (id_category,id_product)"
-
-
-
-
-       
-
-        // "UPDATE ps_category AS ps
-        // -- JOIN knd1y_hikashop_category USING (id)
-        // -- JOIN Question USING (id)
-        // JOIN knd1y_hikashop_category AS hik
-        // ON ps.id_category = hik.category_id
-        // SET ps.id_parent        = hik.category_parent_id,
-        //     ps.id_shop_default  = '1',
-        //     ps.level_depth      = hik.category_depth,
-        //     ps.nleft            = hik.category_left,
-        //     ps.nright           = hik.category_right,
-        //     ps.active           = hik.category_published,
-        //     ps.date_add         = CURDATE(),
-        //     ps.date_upd         = CURDATE(),
-        //     ps.position         = hik.category_ordering,
-        //     ps.is_root_category = '0'"
-       
-        // "UPDATE ps_category_lang AS ps
-        // -- JOIN knd1y_hikashop_category USING (id)
-        // -- JOIN Question USING (id)
-        // JOIN knd1y_hikashop_category AS hik
-        // ON ps.id_category = hik.category_id
-        // SET ps.id_shop          = '1',
-        //     ps.id_lang          = '1',
-        //     ps.name             = hik.category_name,
-        //     ps.description      = hik.category_description,
-        //     ps.link_rewrite     = hik.category_alias,
-        //     ps.meta_title       = hik.category_page_title,
-        //     ps.meta_keywords    = hik.category_keywords,
-        //     ps.meta_description = hik.category_meta_description"
-        
-        
-        #2 - JOINTURE INTERNE 
-        // "UPDATE test AS t, test2 AS t2, test3 AS t3
-        // SET t2.marque_2 = t.marque_2,
-        // t3.marque_2 = t.marque_2,
-        // t2.marque_1 = t.marque_1,
-        // t3.marque_1 = t.marque_1
-        // WHERE t.id_product = t3.id_product AND t.id_product = t2.id_product"
+    //     // #7 - AJOUT la clé primaire sur id_category & id_product
+    //     "ALTER TABLE ps_category_product ADD PRIMARY KEY (id_category,id_product)"
     ];
+    
     $messages = [
+        "<b>VIDANGE TABLES CATEGORIES (1) -> Fonction</b>",
+        "<b>VIDANGE TABLES CATEGORIES (2) -> Exécution Fonction</b>",
         "<b>ps_category_product -> DROP PRIMARY KEY sur toute la table</b>",
         "<b>ps_category_product -> ADD id + AI + PRIMARY</b>",
         "<b>ps_category_product -> CHANGE valeur par default col id_product</b>",
@@ -113,14 +122,44 @@ try {
     $i=0;
     $n=1;
     foreach ($modif as $query) {
-
-    
         $sth = $dbco->prepare($query);
         $sth->execute();
         $resultat = $sth->fetchAll(PDO::FETCH_ASSOC);
         echo '<p>&#10004; '.$n++.') '.$messages[$i++].'</p>';
         };
+    
+    /**
+     * Construction d'une table issue de tables multiples
+     * 2 types de jointures :
+     * #1 - JOIN
+     * #2 - JOINTURE INTERNE
+     */
+    
+     // #1 - UPDATE datas <- knd1y_hikashop_category
+    //  "UPDATE ps_category AS ps
+    //  -- JOIN knd1y_hikashop_category USING (id)
+    //  -- JOIN Question USING (id)
+    //  JOIN knd1y_hikashop_category AS hik
+    //  ON ps.id_category = hik.category_id
+    //  SET ps.id_parent        = hik.category_parent_id,
+    //      ps.id_shop_default  = '1',
+    //      ps.level_depth      = hik.category_depth,
+    //      ps.nleft            = hik.category_left,
+    //      ps.nright           = hik.category_right,
+    //      ps.active           = hik.category_published,
+    //      ps.date_add         = CURDATE(),
+    //      ps.date_upd         = CURDATE(),
+    //      ps.position         = hik.category_ordering,
+    //      ps.is_root_category = '0'"
 
+     #2 - JOIN
+        // "UPDATE test AS t, test2 AS t2, test3 AS t3
+        // SET t2.marque_2 = t.marque_2,
+        // t3.marque_2 = t.marque_2,
+        // t2.marque_1 = t.marque_1,
+        // t3.marque_1 = t.marque_1
+        // WHERE t.id_product = t3.id_product AND t.id_product = t2.id_product"
+     
     /**
      * 1/ Traitement multiple requêtes
      * 2/ Remplacement de données col 1
