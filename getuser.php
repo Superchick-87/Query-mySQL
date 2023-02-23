@@ -3,7 +3,7 @@
 
 <?php
 $servname = 'localhost';
-$dbname = 'Consultations';
+$dbname = 'trconseil2023';
 $user = 'root';
 $pass = 'root';
 
@@ -16,21 +16,18 @@ try {
     
     
     $modif = [ 
-                //  VALUE NULL la clé primaire sur la table
-                // "ALTER TABLE ps_category_product ALTER COLUMN position SET DEFAULT 0",
         /**
         * VIDANGE TABLES CATEGORIES
         */
-        "DROP PROCEDURE IF EXISTS CLEAR_TABLES",
-
-            "CREATE PROCEDURE CLEAR_TABLES()
-                BEGIN
-                    TRUNCATE TABLE test2;
-                    TRUNCATE TABLE test3;
-                    -- etc ...
-                END;",
-      
-            "CALL CLEAR_TABLES()"
+            // "DROP PROCEDURE IF EXISTS CLEAR_TABLES",
+            // "CREATE PROCEDURE CLEAR_TABLES()
+            //     BEGIN
+            //         TRUNCATE TABLE ps_category;
+            //         TRUNCATE TABLE ps_category_lang;
+            //         TRUNCATE TABLE ps_category_product;
+            //         -- etc ...
+            //     END;",
+            // "CALL CLEAR_TABLES()"
 
 //     /**
 //     * TABLE ps_category
@@ -103,12 +100,42 @@ try {
     //     "ALTER TABLE ps_category_product DROP COLUMN id",
        
     //     // #7 - AJOUT la clé primaire sur id_category & id_product
-    //     "ALTER TABLE ps_category_product ADD PRIMARY KEY (id_category,id_product)"
+    //     "ALTER TABLE ps_category_product ADD PRIMARY KEY (id_category,id_product)",
+
+    /**
+    * TABLE ps_category_group
+    */
+        // #1 - SUPRESSION la clé primaire sur la table
+        "ALTER TABLE ps_category_group DROP PRIMARY KEY",
+        "ALTER TABLE ps_category_group DROP INDEX id_category",
+        "ALTER TABLE ps_category_group DROP INDEX id_group",
+               
+        // #2 - AJOUT colonne id + AI + PRIMARY
+         "ALTER TABLE ps_category_group ADD id INT(255) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id)",
+
+        // #3 - CHANGE valeur par default cols id_product + id_category
+        " ALTER TABLE ps_category_group CHANGE id_category id_category INT(10) UNSIGNED NULL DEFAULT NULL",
+        " ALTER TABLE ps_category_group CHANGE 	id_group id_group INT(10) UNSIGNED NULL DEFAULT NULL",
+        
+        // #4 - INSERT temp colonne id
+        "INSERT INTO ps_category_group (id_category) SELECT id_category FROM ps_category",
+        
+        // #5 - UPDATE datas <- 3 pour la visibilité de tous les visiteurs
+        "UPDATE ps_category_group SET id_group = '3'",
+
+        // #6 - SUPRESSION colonne id
+        "ALTER TABLE ps_category_group DROP COLUMN id",
+
+        // #7 - AJOUT INDEX & PRIMARY la clé primaire sur id_category & id_product
+        "ALTER TABLE ps_category_group ADD INDEX id_category (id_category) USING BTREE",
+        "ALTER TABLE ps_category_group ADD INDEX id_group (id_group) USING BTREE",
+        "ALTER TABLE ps_category_group ADD PRIMARY KEY (id_category,id_group)"
     ];
     
     $messages = [
         "<b>VIDANGE TABLES CATEGORIES (1) -> Fonction</b>",
         "<b>VIDANGE TABLES CATEGORIES (2) -> Exécution Fonction</b>",
+        // ps_category_product
         "<b>ps_category_product -> DROP PRIMARY KEY sur toute la table</b>",
         "<b>ps_category_product -> ADD id + AI + PRIMARY</b>",
         "<b>ps_category_product -> CHANGE valeur par default col id_product</b>",
@@ -116,7 +143,17 @@ try {
         "<b>ps_category_product -> INSERT datas (id) </b>",
         "<b>ps_category_product -> UPDATE datas</b>",
         "<b>ps_category_product -> DROP id</b>",
-        "<b>ps_category_product -> ADD PRIMARY KEY (id_category & id_product)</b>"
+        "<b>ps_category_product -> ADD PRIMARY KEY (id_category & id_product)</b>",
+        // ps_category_group
+        "<b>ps_category_group -> DROP PRIMARY KEY sur toute la table</b>",
+        "<b>ps_category_group -> ADD id + AI + PRIMARY</b>",
+        "<b>ps_category_group -> CHANGE valeur par default col id_product</b>",
+        "<b>ps_category_group -> CHANGE valeur par default col id_category</b>",
+        "<b>ps_category_group -> INSERT datas (id) </b>",
+        "<b>ps_category_group -> UPDATE datas</b>",
+        "<b>ps_category_group -> DROP id</b>",
+        "<b>ps_category_group -> ADD PRIMARY KEY (id_category & id_product)</b>"
+
     ];
            
     $i=0;
