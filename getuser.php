@@ -3,10 +3,11 @@
 
 <?php
 $servname = 'localhost';
-$dbname = 'trconseil2023';
+$dbname = 'Consultations';
 $user = 'root';
 $pass = 'root';
-
+include(dirname(__FILE__) . '/includes/sql_replace.php');
+include(dirname(__FILE__) . '/includes/proper_case.php');
 // $tableTarguet2 = 'test3';
 // $tableTarguet = 'test2';
 // $tableOrigin = 'test';
@@ -73,127 +74,23 @@ try {
         //         ps.meta_keywords    = hik.category_keywords,
         //         ps.meta_description = hik.category_meta_description",
 
-        //     * FONCTION CAMELCASE
-        //     */
-        //     "DROP FUNCTION IF EXISTS proper_case",
-        //     "CREATE FUNCTION `proper_case`(str varchar(128)) RETURNS varchar(128)
-        //     BEGIN
-        //     DECLARE n, pos INT DEFAULT 1;
-        //     DECLARE sub, proper VARCHAR(128) DEFAULT '';
 
-        //     if length(trim(str)) > 0 then
-        //         WHILE pos > 0 DO
-        //             set pos = locate(' ',trim(str),n);
-        //             if pos = 0 then
-        //                 set sub = lower(trim(substr(trim(str),n)));
-        //             else
-        //                 set sub = lower(trim(substr(trim(str),n,pos-n)));
-        //             end if;
 
-        //             set proper = concat_ws(' ', proper, concat(lower(left(sub,1)),substr(sub,2)));
-        //             set n = pos + 1;
-        //         END WHILE;
-        //     end if;
-
-        //     RETURN trim(proper);
-        //     END",
-
-        //     "UPDATE test2
-        //     SET marque_2= proper_case(marque_2)"
-
-        "UPDATE test2
-    SET marque_2= LOWER(marque_1)",
-
-        //     * FONCTION SUP CARACTERES SPECIAUX
-        //     */
+        // "UPDATE test2
+        // SET marque_2= LOWER(marque_1)",
+        "DROP FUNCTION IF EXISTS proper_case",
+        $proper_case,
         "DROP FUNCTION IF EXISTS remove_accents",
-        // "DELIMITER",
-        "CREATE FUNCTION remove_accents(`str` TEXT)
-        RETURNS text
-        LANGUAGE SQL
-        DETERMINISTIC
-        NO SQL
-        SQL SECURITY INVOKER
-        COMMENT ''
-     
-    BEGIN
-        SET str = REPLACE(str,'Š','S');
-        SET str = REPLACE(str,'š','s');
-        SET str = REPLACE(str,'Ð','Dj');
-        SET str = REPLACE(str,'Ž','Z');
-        SET str = REPLACE(str,'ž','z');
-        SET str = REPLACE(str,'À','A');
-        SET str = REPLACE(str,'Á','A');
-        SET str = REPLACE(str,'Â','A');
-        SET str = REPLACE(str,'Ã','A');
-        SET str = REPLACE(str,'Ä','A');
-        SET str = REPLACE(str,'Å','A');
-        SET str = REPLACE(str,'Æ','A');
-        SET str = REPLACE(str,'Ç','C');
-        SET str = REPLACE(str,'È','E');
-        SET str = REPLACE(str,'É','E');
-        SET str = REPLACE(str,'Ê','E');
-        SET str = REPLACE(str,'Ë','E');
-        SET str = REPLACE(str,'Ì','I');
-        SET str = REPLACE(str,'Í','I');
-        SET str = REPLACE(str,'Î','I');
-        SET str = REPLACE(str,'Ï','I');
-        SET str = REPLACE(str,'Ñ','N');
-        SET str = REPLACE(str,'Ò','O');
-        SET str = REPLACE(str,'Ó','O');
-        SET str = REPLACE(str,'Ô','O');
-        SET str = REPLACE(str,'Õ','O');
-        SET str = REPLACE(str,'Ö','O');
-        SET str = REPLACE(str,'Ø','O');
-        SET str = REPLACE(str,'Ù','U');
-        SET str = REPLACE(str,'Ú','U');
-        SET str = REPLACE(str,'Û','U');
-        SET str = REPLACE(str,'Ü','U');
-        SET str = REPLACE(str,'Ý','Y');
-        SET str = REPLACE(str,'Þ','B');
-        SET str = REPLACE(str,'ß','Ss');
-        SET str = REPLACE(str,'à','a');
-        SET str = REPLACE(str,'á','a');
-        SET str = REPLACE(str,'â','a');
-        SET str = REPLACE(str,'ã','a');
-        SET str = REPLACE(str,'ä','a');
-        SET str = REPLACE(str,'å','a');
-        SET str = REPLACE(str,'æ','a');
-        SET str = REPLACE(str,'ç','c');
-        SET str = REPLACE(str,'è','e');
-        SET str = REPLACE(str,'é','e');
-        SET str = REPLACE(str,'ê','e');
-        SET str = REPLACE(str,'ë','e');
-        SET str = REPLACE(str,'ì','i');
-        SET str = REPLACE(str,'í','i');
-        SET str = REPLACE(str,'î','i');
-        SET str = REPLACE(str,'ï','i');
-        SET str = REPLACE(str,'ð','o');
-        SET str = REPLACE(str,'ñ','n');
-        SET str = REPLACE(str,'ò','o');
-        SET str = REPLACE(str,'ó','o');
-        SET str = REPLACE(str,'ô','o');
-        SET str = REPLACE(str,'õ','o');
-        SET str = REPLACE(str,'ö','o');
-        SET str = REPLACE(str,'ø','o');
-        SET str = REPLACE(str,'ù','u');
-        SET str = REPLACE(str,'ú','u');
-        SET str = REPLACE(str,'û','u');
-        SET str = REPLACE(str,'ý','y');
-        SET str = REPLACE(str,'ý','y');
-        SET str = REPLACE(str,'þ','b');
-        SET str = REPLACE(str,'ÿ','y');
-        SET str = REPLACE(str,'ƒ','f');
-        SET str = REPLACE(str,'\'','-');
-        SET str = REPLACE(str,',','-');
-        SET str = REPLACE(str,' ','-');
-        SET str = REPLACE(str,'--','-');
-     RETURN str;
-    END",
-        //DELIMITER ;",
+        $remove_accents,
 
         "UPDATE test2
-    SET marque_2= remove_accents(marque_2)",
+        SET marque_2 = proper_case(remove_accents(marque_1))",
+
+
+
+        // "UPDATE test2
+        // SET marque_2= remove_accents(marque_2)"
+
 
         //     /**
         //     * TABLE ps_category_product
@@ -224,34 +121,34 @@ try {
         //     // #7 - AJOUT la clé primaire sur id_category & id_product
         //     "ALTER TABLE ps_category_product ADD PRIMARY KEY (id_category,id_product)",
 
-        /**
-         * TABLE ps_category_group
-         */
-        // #1 - SUPRESSION la clé primaire sur la table
-        "ALTER TABLE ps_category_group DROP PRIMARY KEY",
-        "ALTER TABLE ps_category_group DROP INDEX id_category",
-        "ALTER TABLE ps_category_group DROP INDEX id_group",
+        // /**
+        //  * TABLE ps_category_group
+        //  */
+        // // #1 - SUPRESSION la clé primaire sur la table
+        // "ALTER TABLE ps_category_group DROP PRIMARY KEY",
+        // "ALTER TABLE ps_category_group DROP INDEX id_category",
+        // "ALTER TABLE ps_category_group DROP INDEX id_group",
 
-        // #2 - AJOUT colonne id + AI + PRIMARY
-        "ALTER TABLE ps_category_group ADD id INT(255) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id)",
+        // // #2 - AJOUT colonne id + AI + PRIMARY
+        // "ALTER TABLE ps_category_group ADD id INT(255) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id)",
 
-        // #3 - CHANGE valeur par default cols id_product + id_category
-        " ALTER TABLE ps_category_group CHANGE id_category id_category INT(10) UNSIGNED NULL DEFAULT NULL",
-        " ALTER TABLE ps_category_group CHANGE 	id_group id_group INT(10) UNSIGNED NULL DEFAULT NULL",
+        // // #3 - CHANGE valeur par default cols id_product + id_category
+        // " ALTER TABLE ps_category_group CHANGE id_category id_category INT(10) UNSIGNED NULL DEFAULT NULL",
+        // " ALTER TABLE ps_category_group CHANGE 	id_group id_group INT(10) UNSIGNED NULL DEFAULT NULL",
 
-        // #4 - INSERT temp colonne id
-        "INSERT INTO ps_category_group (id_category) SELECT id_category FROM ps_category",
+        // // #4 - INSERT temp colonne id
+        // "INSERT INTO ps_category_group (id_category) SELECT id_category FROM ps_category",
 
-        // #5 - UPDATE datas <- 3 pour la visibilité de tous les visiteurs
-        "UPDATE ps_category_group SET id_group = '3'",
+        // // #5 - UPDATE datas <- 3 pour la visibilité de tous les visiteurs
+        // "UPDATE ps_category_group SET id_group = '3'",
 
-        // #6 - SUPRESSION colonne id
-        "ALTER TABLE ps_category_group DROP COLUMN id",
+        // // #6 - SUPRESSION colonne id
+        // "ALTER TABLE ps_category_group DROP COLUMN id",
 
-        // #7 - AJOUT INDEX & PRIMARY la clé primaire sur id_category & id_product
-        "ALTER TABLE ps_category_group ADD INDEX id_category (id_category) USING BTREE",
-        "ALTER TABLE ps_category_group ADD INDEX id_group (id_group) USING BTREE",
-        "ALTER TABLE ps_category_group ADD PRIMARY KEY (id_category,id_group)"
+        // // #7 - AJOUT INDEX & PRIMARY la clé primaire sur id_category & id_product
+        // "ALTER TABLE ps_category_group ADD INDEX id_category (id_category) USING BTREE",
+        // "ALTER TABLE ps_category_group ADD INDEX id_group (id_group) USING BTREE",
+        // "ALTER TABLE ps_category_group ADD PRIMARY KEY (id_category,id_group)"
     ];
 
     $messages = [
