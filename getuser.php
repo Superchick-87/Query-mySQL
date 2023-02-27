@@ -78,13 +78,24 @@ try {
 
         // "UPDATE test2
         // SET marque_2= LOWER(marque_1)",
-        "DROP FUNCTION IF EXISTS proper_case",
-        $proper_case,
-        "DROP FUNCTION IF EXISTS remove_accents",
-        $remove_accents,
+        // "DROP FUNCTION IF EXISTS proper_case",
+        // $proper_case,
+        // "DROP FUNCTION IF EXISTS remove_accents",
+        // $remove_accents,
 
-        "UPDATE test2
-        SET marque_2 = proper_case(remove_accents(marque_1))",
+        // "UPDATE test2
+        // SET marque_2 = proper_case(remove_accents(marque_1))",
+
+        // "UPDATE geoAssoc
+        // SET CodePostal = CONCAT('0',CodePostal)
+        // WHERE LENGTH(CodePostal) < 5"
+
+        // "UPDATE geoAssoc
+        // SET Dep = SUBSTR(CodePostal, 1, 2)"
+
+        "UPDATE geoAssoc
+        SET Dep_Nom = 'Creuse'
+        WHERE Dep = '23'"
 
 
 
