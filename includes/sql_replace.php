@@ -81,6 +81,7 @@ $remove_accents =
         SET str = REPLACE(str,',','-');
         SET str = REPLACE(str,' ','-');
         SET str = REPLACE(str,'--','-');
+        SET str = REPLACE(str,'---','-');
         RETURN str;
     END";
 //DELIMITER ;",
