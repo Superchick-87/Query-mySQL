@@ -57,7 +57,7 @@
         /* Methode POST -> passe plusieurs variables */
         // xhttp.open("GET", "getuser.php?Ville="+MenuA,true);
         // xhttp.send();
-        xhttp.open("GET", "getuser.php", true);
+        xhttp.open("GET", "ProductSpecif.php", true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttp.send();
     };
